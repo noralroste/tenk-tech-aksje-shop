@@ -47,6 +47,7 @@ For a detailed introduction, full list of features and architecture overview ple
     - [Node.js version compatibility](#nodejs-version-compatibility)
     - [Troubleshooting](#troubleshooting)
     - [Official companion guide](#official-companion-guide)
+    - [For norske skoler](#for-norske-skoler)
 - [Contributing](#contributing)
 - [References](#references)
 - [Merchandise](#merchandise)
@@ -205,6 +206,13 @@ and is available **for free** in PDF, Kindle and ePub format on LeanPub. You can
 
 [<img alt="Pwning OWASP Juice Shop cover" src="https://raw.githubusercontent.com/juice-shop/pwning-juice-shop/master/docs/modules/ROOT/assets/images/cover.jpg" width="200"/>](https://leanpub.com/juice-shop)
 [<img alt="Pwning OWASP Juice Shop back cover" src="https://raw.githubusercontent.com/juice-shop/pwning-juice-shop/master/docs/modules/ROOT/assets/images/introduction/back.jpg" width="200"/>](https://leanpub.com/juice-shop)
+
+### For norske skoler
+
+Dette repoet er tilpasset bruk i norsk skole fra 8. klasse til VGS3.
+
+- [ARCHITECTURE.md](ARCHITECTURE.md) – teknisk oversikt over applikasjonen med flytdiagrammer (Mermaid)
+- [LÆRINGSPLAN.md](LÆRINGSPLAN.md) – kobling mellom norsk læreplan (LK20) og oppgavene i Juice Shop, med lenker til Udir og OWASP-dokumentasjon
 
 ## Contributing
 
