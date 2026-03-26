@@ -218,6 +218,7 @@ database models and more, see [ARCHITECTURE.md](ARCHITECTURE.md).
 Dette repoet er tilpasset bruk i norsk skole fra 8. klasse til VGS3.
 
 - [LÆRINGSPLAN.md](LÆRINGSPLAN.md) – kobling mellom norsk læreplan (LK20) og oppgavene i Juice Shop, med lenker til Udir og OWASP-dokumentasjon
+- [TODO.md](TODO.md) – pågående beslutninger og oppgaver for tilpasning til norsk skole
 
 ## Contributing
 

@@ -1,0 +1,27 @@
+# TODO
+
+## Tilpasse Juice Shop til aksjehandel-tema
+
+- [ ] Bytte ut produkter med aksjer og finansielle instrumenter
+- [ ] Tilpasse brukergrensesnitt og tekster til aksjehandel-kontekst
+- [ ] Lage realistiske data (selskaper, kurser, porteføljer)
+- [ ] ...
+
+## Internasjonalisering (i18n)
+
+- [ ] **Beslutte hvilke språk som skal støttes**
+  - [ ] Kartlegge elevgrupper og hvilke språk de behersker
+  - [ ] Alternativ: ta utgangspunkt i de 10 mest brukte språkene i Oslo
+  - [ ] Prioritere språk basert på behov
+- [ ] **Designe i18n-løsning som gjør det enkelt å legge til nye språk**
+  - [ ] Undersøke eksisterende i18n-støtte i Juice Shop (Crowdin / i18next)
+  - [ ] Vurdere om vi skal bygge videre på eksisterende løsning eller lage noe nytt
+  - [ ] Dokumentere hvordan man legger til et nytt språk
+
+## Infrastruktur
+
+- [ ] **Beslutte hosting-løsning**
+  - [ ] Kartlegge krav (kostnad, sikkerhet, enkel oppsett, skalerbarhet)
+  - [ ] Identifisere 3–5 konkrete alternativer for ekstern hosting
+  - [ ] Sammenligne alternativene
+  - [ ] Ta en beslutning og dokumentere valget
