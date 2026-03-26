@@ -154,10 +154,35 @@ Please make sure you stay up to date with your chosen version.
 
 [![Gitter](http://img.shields.io/badge/gitter-join%20chat-1dce73.svg)](https://gitter.im/bkimminich/juice-shop)
 
-If you need help with the application setup please check 
+If you need help with the application setup please check
 [our existing _Troubleshooting_](https://pwning.owasp-juice.shop/companion-guide/latest/part4/troubleshooting.html)
 guide. If this does not solve your issue please post your specific problem or question in the
 [Gitter Chat](https://gitter.im/bkimminich/juice-shop) where community members can best try to help you.
+
+#### Native modules on Node.js v24 / Apple Silicon (arm64)
+
+If you get `Error: Could not locate the bindings file` for `sqlite3` or `libxmljs2` when running from source on
+Node.js v24 or Apple Silicon, the prebuilt binaries may not match your platform. Fix it by rebuilding all native
+modules:
+
+```bash
+npm rebuild
+```
+
+If `sqlite3` still fails, upgrade it to v6+ and rebuild manually:
+
+```bash
+npm install sqlite3@6.0.1
+cd node_modules/sqlite3 && npx node-gyp rebuild && cd ../..
+```
+
+Also make sure the frontend dependencies are installed before starting:
+
+```bash
+npm install --prefix frontend
+npm run build:frontend
+npm start
+```
 
 :stop_sign: **Please avoid opening GitHub issues for support requests or questions!**
 
