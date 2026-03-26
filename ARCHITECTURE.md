@@ -110,9 +110,9 @@ flowchart TD
 flowchart LR
     subgraph Frontend
         LG[LoginGuard] --> Ruter
-        AG[AdminGuard] --> Admin[/administration]
-        AccG[AccountingGuard] --> Acc[/accounting]
-        DelG[DeluxeGuard] --> Deluxe[/deluxe-user]
+        AG[AdminGuard] --> Admin["/administration"]
+        AccG[AccountingGuard] --> Acc["/accounting"]
+        DelG[DeluxeGuard] --> Deluxe["/deluxe-user"]
     end
 
     subgraph Backend
