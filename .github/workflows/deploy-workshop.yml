@@ -63,6 +63,16 @@ jobs:
       matrix:
         group: ${{ fromJSON(format('[{0}]', (inputs.groups == '1' && '1' || inputs.groups == '2' && '1,2' || inputs.groups == '3' && '1,2,3' || inputs.groups == '4' && '1,2,3,4' || '1,2,3,4,5'))) }}
     steps:
+      - name: Get Render owner ID
+        id: owner
+        env:
+          RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
+        run: |
+          OWNER_ID=$(curl -s -H "Authorization: Bearer ${RENDER_API_KEY}" \
+            "https://api.render.com/v1/owners" | jq -r '.[0].owner.id')
+          echo "id=${OWNER_ID}" >> $GITHUB_OUTPUT
+          echo "Owner ID: ${OWNER_ID}"
+
       - name: Create or update Render service
         env:
           RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
@@ -70,6 +80,7 @@ jobs:
           EXPIRES_AT=$(date -u -d "+${{ inputs.ttl_hours }} hours" +%Y-%m-%dT%H:%M:%SZ)
           SERVICE_NAME="aksje-shop-gruppe-${{ matrix.group }}"
           IMAGE_URL="${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:workshop"
+          OWNER_ID="${{ steps.owner.outputs.id }}"
 
           # Check if service already exists
           EXISTING=$(curl -s -H "Authorization: Bearer ${RENDER_API_KEY}" \
@@ -99,6 +110,7 @@ jobs:
               -d '{
                 "type": "web_service",
                 "name": "'"${SERVICE_NAME}"'",
+                "ownerId": "'"${OWNER_ID}"'",
                 "plan": "free",
                 "region": "frankfurt",
                 "image": {
