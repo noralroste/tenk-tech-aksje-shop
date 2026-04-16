@@ -72,27 +72,27 @@ jobs:
           IMAGE_URL="${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:workshop"
 
           # Check if service already exists
-          EXISTING=$(curl -sf -H "Authorization: Bearer ${RENDER_API_KEY}" \
+          EXISTING=$(curl -s -H "Authorization: Bearer ${RENDER_API_KEY}" \
             "https://api.render.com/v1/services?name=${SERVICE_NAME}&limit=1" \
             | jq -r 'if length > 0 then .[0].service.id else empty end')
 
           if [ -n "$EXISTING" ]; then
             echo "Service ${SERVICE_NAME} exists (${EXISTING}), triggering deploy"
-            curl -sf -X POST \
+            curl -s --fail-with-body -X POST \
               -H "Authorization: Bearer ${RENDER_API_KEY}" \
               -H "Content-Type: application/json" \
               "https://api.render.com/v1/services/${EXISTING}/deploys" \
               -d "{\"imageUrl\": \"${IMAGE_URL}\"}"
 
             # Update expiry
-            curl -sf -X PUT \
+            curl -s --fail-with-body -X PUT \
               -H "Authorization: Bearer ${RENDER_API_KEY}" \
               -H "Content-Type: application/json" \
               "https://api.render.com/v1/services/${EXISTING}/env-vars" \
               -d '[{"key": "EXPIRES_AT", "value": "'"${EXPIRES_AT}"'"}, {"key": "NODE_ENV", "value": "production"}]'
           else
             echo "Creating ${SERVICE_NAME} (expires: ${EXPIRES_AT})"
-            RESPONSE=$(curl -sf -X POST \
+            RESPONSE=$(curl -s --fail-with-body -X POST \
               -H "Authorization: Bearer ${RENDER_API_KEY}" \
               -H "Content-Type: application/json" \
               "https://api.render.com/v1/services" \
