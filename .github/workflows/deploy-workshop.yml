@@ -20,6 +20,8 @@ on:
         default: "8"
         type: choice
         options:
+          - "1"
+          - "2"
           - "4"
           - "8"
           - "12"
