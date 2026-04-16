@@ -213,3 +213,61 @@ Learn more: [Code Snippets Documentation](https://pwning.owasp-juice.shop/compan
 ## Remember
 
 Claude is a powerful tool for productivity, but you are responsible for the quality and correctness of your contributions. Always review, test, and understand the code before submitting.
+
+---
+
+## Workshop Hosting
+
+Workshop instances run on Render (free tier). **Free tier gives 750 hours/month total across all services.**
+Running 5 instances continuously exhausts the quota in 6 days.
+
+> ⛔ **ALWAYS suspend instances when the workshop is done. Never leave instances running unnecessarily.**
+> If you deploy workshop instances, your first responsibility when done is to suspend them.
+
+### Instances
+
+| Group | URL |
+|-------|-----|
+| Gruppe 1 | https://aksje-shop-gruppe-1.onrender.com |
+| Gruppe 2 | https://aksje-shop-gruppe-2.onrender.com |
+| Gruppe 3 | https://aksje-shop-gruppe-3.onrender.com |
+| Gruppe 4 | https://aksje-shop-gruppe-4.onrender.com |
+| Gruppe 5 | https://aksje-shop-gruppe-5.onrender.com |
+
+Note: Free tier instances auto-sleep after 15 minutes of inactivity (~1 min cold start on first request). Sleeping and suspended instances do not count toward the 750 hour/month limit — only actively running instances do.
+
+### Deploy workshop
+
+Trigger via GitHub Actions (requires GitHub access — no Render API key needed):
+
+```bash
+gh workflow run deploy-workshop.yml \
+  --repo sb1u-tenk-tech/tenk-tech-aksje-shop \
+  -f groups=3 \
+  -f ttl_hours=8
+```
+
+Or via GitHub UI: Actions → "Deploy workshop instances" → Run workflow.
+
+Instances are automatically suspended after `ttl_hours`. The cleanup workflow runs every 2 hours.
+
+### Suspend immediately (when workshop is done)
+
+```bash
+gh workflow run cleanup-workshop.yml \
+  --repo sb1u-tenk-tech/tenk-tech-aksje-shop \
+  -f suspend_all=true
+```
+
+Or via GitHub UI: Actions → "Cleanup expired workshop instances" → Run workflow → check "Suspend all workshop instances immediately".
+
+### When helping with workshop deployment
+
+**ALWAYS ask before deploying — never deploy without explicit answers to both:**
+1. How many groups? (1–5, default suggestion: 1)
+2. TTL in hours? (1–24, default suggestion: 1) — deploying without a TTL is not allowed
+
+Prefer short TTL values — instances can always be redeployed if the workshop runs longer.
+
+After deploy: remind the user to suspend instances when the workshop is done.
+After the workshop: proactively ask if instances should be suspended.

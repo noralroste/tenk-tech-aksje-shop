@@ -220,6 +220,41 @@ Dette repoet er tilpasset bruk i norsk skole fra 8. klasse til VGS3.
 - [LÆRINGSPLAN.md](LÆRINGSPLAN.md) – kobling mellom norsk læreplan (LK20) og oppgavene i Juice Shop, med lenker til Udir og OWASP-dokumentasjon
 - [TODO.md](TODO.md) – pågående beslutninger og oppgaver for tilpasning til norsk skole
 
+#### Workshop-hosting
+
+For workshoper med inntil 5 grupper finnes ferdig oppsett med automatisk deploy og opprydding via GitHub Actions.
+
+Hver gruppe får en isolert instans med egen URL:
+
+| Gruppe | URL |
+|--------|-----|
+| Gruppe 1 | https://aksje-shop-gruppe-1.onrender.com |
+| Gruppe 2 | https://aksje-shop-gruppe-2.onrender.com |
+| Gruppe 3 | https://aksje-shop-gruppe-3.onrender.com |
+| Gruppe 4 | https://aksje-shop-gruppe-4.onrender.com |
+| Gruppe 5 | https://aksje-shop-gruppe-5.onrender.com |
+
+**Deploy — via GitHub UI:**
+Actions → "Deploy workshop instances" → Run workflow → velg antall grupper og levetid (TTL).
+
+**Deploy — med Claude:**
+```
+Deploy workshop for 3 grupper i 6 timer
+```
+Claude kjører workflowen og bekrefter at instansene er oppe.
+
+**Opprydding — via GitHub UI:**
+Actions → "Cleanup expired workshop instances" → Run workflow → huk av "Suspend all workshop instances immediately".
+
+**Opprydding — med Claude:**
+```
+Suspender alle workshop-instanser
+```
+
+Instansene suspenderes også automatisk etter TTL (cleanup-workflow kjører hver 2. time).
+
+> ⚠️ Instansene kjører på Render free tier (750 timer/mnd totalt for aktive instanser). Sovende instanser (auto-sleep etter 15 min inaktivitet) og suspenderte instanser teller ikke. Suspender alltid når workshopen er ferdig.
+
 ## Contributing
 
 [![GitHub contributors](https://img.shields.io/github/contributors/juice-shop/juice-shop.svg)](https://github.com/juice-shop/juice-shop/graphs/contributors)

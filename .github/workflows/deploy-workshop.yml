@@ -6,7 +6,7 @@ on:
       groups:
         description: "Number of groups (1-5)"
         required: true
-        default: "3"
+        default: "1"
         type: choice
         options:
           - "1"
@@ -17,7 +17,7 @@ on:
       ttl_hours:
         description: "Auto-cleanup after (hours)"
         required: true
-        default: "8"
+        default: "1"
         type: choice
         options:
           - "1"
@@ -63,68 +63,41 @@ jobs:
       matrix:
         group: ${{ fromJSON(format('[{0}]', (inputs.groups == '1' && '1' || inputs.groups == '2' && '1,2' || inputs.groups == '3' && '1,2,3' || inputs.groups == '4' && '1,2,3,4' || '1,2,3,4,5'))) }}
     steps:
-      - name: Get Render owner ID
-        id: owner
-        env:
-          RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
-        run: |
-          OWNER_ID=$(curl -s -H "Authorization: Bearer ${RENDER_API_KEY}" \
-            "https://api.render.com/v1/owners" | jq -r '.[0].owner.id')
-          echo "id=${OWNER_ID}" >> $GITHUB_OUTPUT
-          echo "Owner ID: ${OWNER_ID}"
-
-      - name: Create or update Render service
+      - name: Resume and redeploy Render service
         env:
           RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
         run: |
           EXPIRES_AT=$(date -u -d "+${{ inputs.ttl_hours }} hours" +%Y-%m-%dT%H:%M:%SZ)
           SERVICE_NAME="aksje-shop-gruppe-${{ matrix.group }}"
           IMAGE_URL="${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:workshop"
-          OWNER_ID="${{ steps.owner.outputs.id }}"
 
-          # Check if service already exists
-          EXISTING=$(curl -s -H "Authorization: Bearer ${RENDER_API_KEY}" \
+          SERVICE_ID=$(curl -s -H "Authorization: Bearer ${RENDER_API_KEY}" \
             "https://api.render.com/v1/services?name=${SERVICE_NAME}&limit=1" \
             | jq -r 'if length > 0 then .[0].service.id else empty end')
 
-          if [ -n "$EXISTING" ]; then
-            echo "Service ${SERVICE_NAME} exists (${EXISTING}), triggering deploy"
-            curl -s --fail-with-body -X POST \
-              -H "Authorization: Bearer ${RENDER_API_KEY}" \
-              -H "Content-Type: application/json" \
-              "https://api.render.com/v1/services/${EXISTING}/deploys" \
-              -d "{\"imageUrl\": \"${IMAGE_URL}\"}"
-
-            # Update expiry
-            curl -s --fail-with-body -X PUT \
-              -H "Authorization: Bearer ${RENDER_API_KEY}" \
-              -H "Content-Type: application/json" \
-              "https://api.render.com/v1/services/${EXISTING}/env-vars" \
-              -d '[{"key": "EXPIRES_AT", "value": "'"${EXPIRES_AT}"'"}, {"key": "NODE_ENV", "value": "production"}]'
-          else
-            echo "Creating ${SERVICE_NAME} (expires: ${EXPIRES_AT})"
-            HTTP_CODE=$(curl -s -o /tmp/render-response.json -w '%{http_code}' -X POST \
-              -H "Authorization: Bearer ${RENDER_API_KEY}" \
-              -H "Content-Type: application/json" \
-              "https://api.render.com/v1/services" \
-              -d '{
-                "type": "web_service",
-                "name": "'"${SERVICE_NAME}"'",
-                "ownerId": "'"${OWNER_ID}"'",
-                "plan": "free",
-                "region": "frankfurt",
-                "image": {
-                  "imagePath": "'"${IMAGE_URL}"'"
-                },
-                "envVars": [
-                  {"key": "EXPIRES_AT", "value": "'"${EXPIRES_AT}"'"},
-                  {"key": "NODE_ENV", "value": "production"}
-                ]
-              }')
-            echo "HTTP status: ${HTTP_CODE}"
-            cat /tmp/render-response.json | jq . 2>/dev/null || cat /tmp/render-response.json
-            if [ "$HTTP_CODE" -ge 400 ]; then exit 1; fi
+          if [ -z "$SERVICE_ID" ]; then
+            echo "::error::Service ${SERVICE_NAME} not found. Create it manually in the Render Dashboard first."
+            exit 1
           fi
+
+          echo "Resuming ${SERVICE_NAME} (${SERVICE_ID})"
+          curl -s --fail-with-body -X POST \
+            -H "Authorization: Bearer ${RENDER_API_KEY}" \
+            "https://api.render.com/v1/services/${SERVICE_ID}/resume"
+
+          echo "Updating expiry to ${EXPIRES_AT}"
+          curl -s --fail-with-body -X PUT \
+            -H "Authorization: Bearer ${RENDER_API_KEY}" \
+            -H "Content-Type: application/json" \
+            "https://api.render.com/v1/services/${SERVICE_ID}/env-vars" \
+            -d '[{"key": "EXPIRES_AT", "value": "'"${EXPIRES_AT}"'"}, {"key": "NODE_ENV", "value": "production"}]'
+
+          echo "Triggering redeploy"
+          curl -s --fail-with-body -X POST \
+            -H "Authorization: Bearer ${RENDER_API_KEY}" \
+            -H "Content-Type: application/json" \
+            "https://api.render.com/v1/services/${SERVICE_ID}/deploys" \
+            -d "{\"imageUrl\": \"${IMAGE_URL}\"}"
 
           echo "### :rocket: Gruppe ${{ matrix.group }}" >> $GITHUB_STEP_SUMMARY
           echo "- **URL:** https://${SERVICE_NAME}.onrender.com" >> $GITHUB_STEP_SUMMARY
