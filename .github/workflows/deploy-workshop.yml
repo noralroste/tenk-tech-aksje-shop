@@ -69,7 +69,6 @@ jobs:
         run: |
           EXPIRES_AT=$(date -u -d "+${{ inputs.ttl_hours }} hours" +%Y-%m-%dT%H:%M:%SZ)
           SERVICE_NAME="aksje-shop-gruppe-${{ matrix.group }}"
-          IMAGE_URL="${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:workshop"
 
           SERVICE_ID=$(curl -s -H "Authorization: Bearer ${RENDER_API_KEY}" \
             "https://api.render.com/v1/services?name=${SERVICE_NAME}&limit=1" \
@@ -95,9 +94,7 @@ jobs:
           echo "Triggering redeploy"
           curl -s --fail-with-body -X POST \
             -H "Authorization: Bearer ${RENDER_API_KEY}" \
-            -H "Content-Type: application/json" \
-            "https://api.render.com/v1/services/${SERVICE_ID}/deploys" \
-            -d "{\"imageUrl\": \"${IMAGE_URL}\"}"
+            "https://api.render.com/v1/services/${SERVICE_ID}/deploys"
 
           echo "### :rocket: Gruppe ${{ matrix.group }}" >> $GITHUB_STEP_SUMMARY
           echo "- **URL:** https://${SERVICE_NAME}.onrender.com" >> $GITHUB_STEP_SUMMARY
