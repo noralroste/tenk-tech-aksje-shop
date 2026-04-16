@@ -1,0 +1,57 @@
+name: Cleanup expired workshop instances
+
+on:
+  schedule:
+    - cron: "0 */2 * * *" # Every 2 hours
+  workflow_dispatch: # Manual trigger for immediate cleanup
+
+jobs:
+  cleanup:
+    name: Remove expired instances
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check and delete expired services
+        run: |
+          echo "## :broom: Workshop cleanup" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          SERVICES=$(curl -s -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}" \
+            "https://api.render.com/v1/services?limit=20" | jq -c '.[]')
+
+          DELETED=0
+          NOW=$(date -u +%s)
+
+          echo "$SERVICES" | while read -r entry; do
+            SERVICE_NAME=$(echo "$entry" | jq -r '.service.name')
+            SERVICE_ID=$(echo "$entry" | jq -r '.service.id')
+
+            # Only touch workshop instances
+            if [[ "$SERVICE_NAME" != aksje-shop-gruppe-* ]]; then
+              continue
+            fi
+
+            # Get EXPIRES_AT env var
+            EXPIRES_AT=$(echo "$entry" | jq -r '.service.envVars[]? | select(.key == "EXPIRES_AT") | .value // empty')
+
+            if [ -z "$EXPIRES_AT" ]; then
+              echo "- :warning: **${SERVICE_NAME}**: no expiry set, skipping" >> $GITHUB_STEP_SUMMARY
+              continue
+            fi
+
+            EXPIRES_EPOCH=$(date -u -d "$EXPIRES_AT" +%s 2>/dev/null || echo 0)
+
+            if [ "$NOW" -gt "$EXPIRES_EPOCH" ]; then
+              echo "Deleting expired service: $SERVICE_NAME (expired: $EXPIRES_AT)"
+              curl -s -X DELETE \
+                -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}" \
+                "https://api.render.com/v1/services/${SERVICE_ID}"
+              echo "- :white_check_mark: **${SERVICE_NAME}** deleted (expired ${EXPIRES_AT})" >> $GITHUB_STEP_SUMMARY
+              DELETED=$((DELETED + 1))
+            else
+              echo "- :clock1: **${SERVICE_NAME}** expires ${EXPIRES_AT}" >> $GITHUB_STEP_SUMMARY
+            fi
+          done
+
+          if [ "$DELETED" -eq 0 ]; then
+            echo "No expired services found." >> $GITHUB_STEP_SUMMARY
+          fi

@@ -1,0 +1,130 @@
+name: Deploy workshop instances
+
+on:
+  workflow_dispatch:
+    inputs:
+      groups:
+        description: "Number of groups (1-5)"
+        required: true
+        default: "3"
+        type: choice
+        options:
+          - "1"
+          - "2"
+          - "3"
+          - "4"
+          - "5"
+      ttl_hours:
+        description: "Auto-cleanup after (hours)"
+        required: true
+        default: "8"
+        type: choice
+        options:
+          - "4"
+          - "8"
+          - "12"
+          - "24"
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  build-image:
+    name: Build and push Docker image
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:workshop
+
+  deploy:
+    name: Deploy group ${{ matrix.group }}
+    needs: build-image
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        group: ${{ fromJSON(format('[{0}]', (inputs.groups == '1' && '1' || inputs.groups == '2' && '1,2' || inputs.groups == '3' && '1,2,3' || inputs.groups == '4' && '1,2,3,4' || '1,2,3,4,5'))) }}
+    steps:
+      - name: Create or update Render service
+        env:
+          RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
+        run: |
+          EXPIRES_AT=$(date -u -d "+${{ inputs.ttl_hours }} hours" +%Y-%m-%dT%H:%M:%SZ)
+          SERVICE_NAME="aksje-shop-gruppe-${{ matrix.group }}"
+          IMAGE_URL="${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:workshop"
+
+          # Check if service already exists
+          EXISTING=$(curl -sf -H "Authorization: Bearer ${RENDER_API_KEY}" \
+            "https://api.render.com/v1/services?name=${SERVICE_NAME}&limit=1" \
+            | jq -r 'if length > 0 then .[0].service.id else empty end')
+
+          if [ -n "$EXISTING" ]; then
+            echo "Service ${SERVICE_NAME} exists (${EXISTING}), triggering deploy"
+            curl -sf -X POST \
+              -H "Authorization: Bearer ${RENDER_API_KEY}" \
+              -H "Content-Type: application/json" \
+              "https://api.render.com/v1/services/${EXISTING}/deploys" \
+              -d "{\"imageUrl\": \"${IMAGE_URL}\"}"
+
+            # Update expiry
+            curl -sf -X PUT \
+              -H "Authorization: Bearer ${RENDER_API_KEY}" \
+              -H "Content-Type: application/json" \
+              "https://api.render.com/v1/services/${EXISTING}/env-vars" \
+              -d '[{"key": "EXPIRES_AT", "value": "'"${EXPIRES_AT}"'"}, {"key": "NODE_ENV", "value": "production"}]'
+          else
+            echo "Creating ${SERVICE_NAME} (expires: ${EXPIRES_AT})"
+            RESPONSE=$(curl -sf -X POST \
+              -H "Authorization: Bearer ${RENDER_API_KEY}" \
+              -H "Content-Type: application/json" \
+              "https://api.render.com/v1/services" \
+              -d '{
+                "type": "web_service",
+                "name": "'"${SERVICE_NAME}"'",
+                "plan": "free",
+                "region": "frankfurt",
+                "image": {
+                  "imagePath": "'"${IMAGE_URL}"'"
+                },
+                "envVars": [
+                  {"key": "EXPIRES_AT", "value": "'"${EXPIRES_AT}"'"},
+                  {"key": "NODE_ENV", "value": "production"}
+                ]
+              }')
+            echo "$RESPONSE" | jq .
+          fi
+
+          echo "### :rocket: Gruppe ${{ matrix.group }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **URL:** https://${SERVICE_NAME}.onrender.com" >> $GITHUB_STEP_SUMMARY
+          echo "- **Utløper:** ${EXPIRES_AT}" >> $GITHUB_STEP_SUMMARY
+
+  summary:
+    name: Workshop URLs
+    needs: deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print URLs
+        run: |
+          echo "## :tada: Workshop er klar!" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          for i in $(seq 1 ${{ inputs.groups }}); do
+            echo "- **Gruppe ${i}:** https://aksje-shop-gruppe-${i}.onrender.com" >> $GITHUB_STEP_SUMMARY
+          done
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Instansene ryddes automatisk opp etter **${{ inputs.ttl_hours }} timer**." >> $GITHUB_STEP_SUMMARY
