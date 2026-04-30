@@ -39,12 +39,12 @@ Disse oppgavene krever kun nysgjerrighet og grunnleggende forståelse av nettsid
 | Zero Stars | Validering | Send inn en anmeldelse med null stjerner | |
 | Repetitive Registration | Validering | Registrer en bruker uten å gjenta passordet riktig | [![](docs/open-in-new.svg)](https://cheatsheetseries.owasp.org/cheatsheets/Input_Validation_Cheat_Sheet.html) |
 | Missing Encoding | Validering | Hent et bilde som er kodet feil i URL-en | |
-| Bonus Payload | XSS | Bruk bonusnyttelasten i DOM XSS-utfordringen | [![](docs/open-in-new.svg)](https://cheatsheetseries.owasp.org/cheatsheets/DOM_based_XSS_Prevention_Cheat_Sheet.html) |
 | Exposed Metrics | Observerbarhet | Finn endepunktet for overvåkingsdata | |
 | Bully Chatbot | Diverse | Få støtte-chatboten til å gi deg en kupongkode | |
 | Mass Dispel | Diverse | Lukk flere varsler på én gang | |
 | Outdated Allowlist | Uvalidert omdirigering | La nettsiden omdirigere deg til en gammel kryptoadresse | [![](docs/open-in-new.svg)](https://cheatsheetseries.owasp.org/cheatsheets/Unvalidated_Redirects_and_Forwards_Cheat_Sheet.html) |
 | DOM XSS | XSS | Utfør et enkelt DOM XSS-angrep (observer hva som skjer) | [![](docs/open-in-new.svg)](https://cheatsheetseries.owasp.org/cheatsheets/DOM_based_XSS_Prevention_Cheat_Sheet.html) |
+| Bonus Payload | XSS | Bruk bonusnyttelasten i DOM XSS-utfordringen (krever DOM XSS løst først) | [![](docs/open-in-new.svg)](https://cheatsheetseries.owasp.org/cheatsheets/DOM_based_XSS_Prevention_Cheat_Sheet.html) |
 
 ---
 
