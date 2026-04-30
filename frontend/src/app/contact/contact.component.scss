@@ -79,11 +79,21 @@ mat-hint {
   font-size: 0.85em;
 }
 
-.star {
-  color: $star-off;
+.star-rating {
+  display: flex;
+  gap: $space-3xs;
 }
 
-.active {
+.star {
+  color: $star-off;
+  cursor: pointer;
+  font-size: 32px;
+  height: 32px;
+  width: 32px;
+  user-select: none;
+}
+
+.star.active {
   color: $star-on;
 }
 
