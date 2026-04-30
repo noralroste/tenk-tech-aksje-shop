@@ -36,9 +36,17 @@
 
         <div class="rating-container">
           <label class="rating-label" translate>LABEL_RATING</label>
-          <mat-slider id="rating" min="1" max="5" step="1" showTickMarks discrete [displayWith]="formatRating" aria-label="Slider for selecting the star rating">
-            <input matSliderThumb [(ngModel)]="rating" />
-          </mat-slider>
+          <div id="rating" class="star-rating" aria-label="Star rating selector">
+            @for (star of [1, 2, 3, 4, 5]; track star) {
+              <mat-icon
+                class="star"
+                [class.active]="star <= rating"
+                (click)="setRating(star)"
+                [attr.aria-label]="star + ' stars'">
+                {{ star <= rating ? 'star' : 'star_border' }}
+              </mat-icon>
+            }
+          </div>
         </div>
 
         <div class="captcha-info">

@@ -14,7 +14,6 @@ import { FormSubmitService } from '../Services/form-submit.service'
 import { TranslateService, TranslateModule } from '@ngx-translate/core'
 import { SnackBarHelperService } from '../Services/snack-bar-helper.service'
 import { MatButtonModule } from '@angular/material/button'
-import { MatSliderModule } from '@angular/material/slider'
 
 import { MatInputModule } from '@angular/material/input'
 import { MatFormFieldModule, MatLabel, MatHint, MatError } from '@angular/material/form-field'
@@ -28,7 +27,7 @@ library.add(faStar, faPaperPlane)
   selector: 'app-contact',
   templateUrl: './contact.component.html',
   styleUrls: ['./contact.component.scss'],
-  imports: [MatCardModule, TranslateModule, FormsModule, ReactiveFormsModule, MatFormFieldModule, MatLabel, MatInputModule, MatHint, MatError, MatSliderModule, MatButtonModule, MatIconModule]
+  imports: [MatCardModule, TranslateModule, FormsModule, ReactiveFormsModule, MatFormFieldModule, MatLabel, MatInputModule, MatHint, MatError, MatButtonModule, MatIconModule]
 })
 export class ContactComponent implements OnInit {
   private readonly userService = inject(UserService)
@@ -42,7 +41,7 @@ export class ContactComponent implements OnInit {
   public feedbackControl: UntypedFormControl = new UntypedFormControl('', [Validators.required, Validators.maxLength(160)])
   public captchaControl: UntypedFormControl = new UntypedFormControl('', [Validators.required, Validators.pattern('-?[\\d]*')])
   public userIdControl: UntypedFormControl = new UntypedFormControl('', [])
-  public rating = 0
+  public rating = 3
   public feedback: any = undefined
   public captcha: any
   public captchaId: any
@@ -126,7 +125,7 @@ export class ContactComponent implements OnInit {
     this.feedbackControl.markAsUntouched()
     this.feedbackControl.markAsPristine()
     this.feedbackControl.setValue('')
-    this.rating = 0
+    this.rating = 3
     this.captchaControl.markAsUntouched()
     this.captchaControl.markAsPristine()
     this.captchaControl.setValue('')
@@ -136,6 +135,10 @@ export class ContactComponent implements OnInit {
     this.captchaControl.markAsUntouched()
     this.captchaControl.markAsPristine()
     this.captchaControl.setValue('')
+  }
+
+  setRating (star: number) {
+    this.rating = this.rating === star ? 0 : star
   }
 
   formatRating (value: number) {
