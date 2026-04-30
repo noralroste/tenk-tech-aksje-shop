@@ -80,9 +80,9 @@ jobs:
           fi
 
           echo "Resuming ${SERVICE_NAME} (${SERVICE_ID})"
-          curl -s --fail-with-body -X POST \
+          curl -s -X POST \
             -H "Authorization: Bearer ${RENDER_API_KEY}" \
-            "https://api.render.com/v1/services/${SERVICE_ID}/resume"
+            "https://api.render.com/v1/services/${SERVICE_ID}/resume" || true
 
           echo "Updating expiry to ${EXPIRES_AT}"
           curl -s --fail-with-body -X PUT \
