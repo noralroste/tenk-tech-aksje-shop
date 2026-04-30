@@ -41,7 +41,6 @@ Disse oppgavene krever kun nysgjerrighet og grunnleggende forståelse av nettsid
 | Missing Encoding | Validering | Hent et bilde som er kodet feil i URL-en | |
 | Bully Chatbot | Diverse | Få støtte-chatboten til å gi deg en kupongkode | |
 | Mass Dispel | Diverse | Lukk flere varsler på én gang | |
-| Outdated Allowlist | Uvalidert omdirigering | La nettsiden omdirigere deg til en gammel kryptoadresse | [![](docs/open-in-new.svg)](https://cheatsheetseries.owasp.org/cheatsheets/Unvalidated_Redirects_and_Forwards_Cheat_Sheet.html) |
 | DOM XSS | XSS | Utfør et enkelt DOM XSS-angrep (observer hva som skjer) | [![](docs/open-in-new.svg)](https://cheatsheetseries.owasp.org/cheatsheets/DOM_based_XSS_Prevention_Cheat_Sheet.html) |
 | Bonus Payload | XSS | Bruk bonusnyttelasten i DOM XSS-utfordringen (krever DOM XSS løst først) | [![](docs/open-in-new.svg)](https://cheatsheetseries.owasp.org/cheatsheets/DOM_based_XSS_Prevention_Cheat_Sheet.html) |
 
@@ -87,6 +86,7 @@ Disse krever forståelse av HTTP, autentisering, og grunnleggende webutvikling.
 | Visual Geo Stalking | Sensitiv data | Finn svar på sikkerhetsspørsmål via bildeinnhold | [![](docs/open-in-new.svg)](https://cheatsheetseries.owasp.org/cheatsheets/Choosing_and_Using_Security_Questions_Cheat_Sheet.html) |
 | Password Hash Leak | Sensitiv data | Hent passordhash direkte fra REST API | [![](docs/open-in-new.svg)](https://owasp.org/API-Security/editions/2019/en/0xa3-excessive-data-exposure) |
 | Exposed credentials | Sensitiv data | Finn hardkodede testbrukerdetaljer i klientkoden | [![](docs/open-in-new.svg)](https://cheatsheetseries.owasp.org/cheatsheets/Secrets_Management_Cheat_Sheet.html) |
+| Outdated Allowlist | Uvalidert omdirigering | La nettsiden omdirigere deg til en gammel kryptoadresse | [![](docs/open-in-new.svg)](https://cheatsheetseries.owasp.org/cheatsheets/Unvalidated_Redirects_and_Forwards_Cheat_Sheet.html) |
 
 ---
 
@@ -246,8 +246,8 @@ Disse er ment for elever med spesiell interesse for sikkerhet, eller som forbere
 
 | Klassetrinn | Vanskelighet | Antall oppgaver |
 |-------------|-------------|-----------------|
-| 8.–10. klasse | ⭐ | 11 |
-| VGS1 (IT1) | ⭐⭐ | 16 |
+| 8.–10. klasse | ⭐ | 10 |
+| VGS1 (IT1) | ⭐⭐ | 17 |
 | VGS2 (IT2 / VG2 IT) | ⭐⭐⭐ | 21 |
 | VGS3 / Fordypning | ⭐⭐⭐⭐ | 27 |
 | Ekspert / CTF | ⭐⭐⭐⭐⭐–⭐⭐⭐⭐⭐⭐ | 30 |
