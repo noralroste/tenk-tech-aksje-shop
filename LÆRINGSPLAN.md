@@ -39,7 +39,6 @@ Disse oppgavene krever kun nysgjerrighet og grunnleggende forståelse av nettsid
 | Zero Stars | Validering | Send inn en anmeldelse med null stjerner | |
 | Repetitive Registration | Validering | Registrer en bruker uten å gjenta passordet riktig | [![](docs/open-in-new.svg)](https://cheatsheetseries.owasp.org/cheatsheets/Input_Validation_Cheat_Sheet.html) |
 | Missing Encoding | Validering | Hent et bilde som er kodet feil i URL-en | |
-| Exposed Metrics | Observerbarhet | Finn endepunktet for overvåkingsdata | |
 | Bully Chatbot | Diverse | Få støtte-chatboten til å gi deg en kupongkode | |
 | Mass Dispel | Diverse | Lukk flere varsler på én gang | |
 | Outdated Allowlist | Uvalidert omdirigering | La nettsiden omdirigere deg til en gammel kryptoadresse | [![](docs/open-in-new.svg)](https://cheatsheetseries.owasp.org/cheatsheets/Unvalidated_Redirects_and_Forwards_Cheat_Sheet.html) |
@@ -247,12 +246,12 @@ Disse er ment for elever med spesiell interesse for sikkerhet, eller som forbere
 
 | Klassetrinn | Vanskelighet | Antall oppgaver |
 |-------------|-------------|-----------------|
-| 8.–10. klasse | ⭐ | 12 |
+| 8.–10. klasse | ⭐ | 11 |
 | VGS1 (IT1) | ⭐⭐ | 16 |
 | VGS2 (IT2 / VG2 IT) | ⭐⭐⭐ | 21 |
 | VGS3 / Fordypning | ⭐⭐⭐⭐ | 27 |
 | Ekspert / CTF | ⭐⭐⭐⭐⭐–⭐⭐⭐⭐⭐⭐ | 30 |
-| **Totalt** | | **106** |
+| **Totalt** | | **105** |
 
 ---
 
